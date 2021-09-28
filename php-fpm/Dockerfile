@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
     python3-venv \
     python3-pip \
     cups \
+    cron \
     cups-bsd \
     iputils-ping
 
@@ -44,7 +45,9 @@ RUN useradd -u 1000 -ms /bin/bash -g www www
 
 # Change current user to www
 USER www
-
+RUN chmod 0644 /etc/cron.d/cron
+RUN touch /var/log/cron.log
+CMD printenv > /etc/environment && echo “cron starting…” && (cron) && : > /var/log/cron.log && tail -f /var/log/cron.log
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
